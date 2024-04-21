@@ -1,23 +1,24 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <random>
-#include <Sigma.h>
-#include <Eigen/Dense>
+#include "Sigmoid.h"
+#include "Rand.h"
 
-class Layer {
-public:
-    Eigen::MatrixXd A;
-    Eigen::MatrixXd b;
+namespace NeuralNets {
+    class Layer {
+        Matrix A_;
+        Vector b_;
 
-    Layer(int64_t m, int64_t n);
+        static Row GetRowOf1(IndexType1 cols);
+        static Vector GetVecOf1(IndexType1 rows);
 
-    Eigen::MatrixXd CalcLayerValue(const Eigen::MatrixXd &x);
+        friend class Network;
 
-    Eigen::MatrixXd GradA(const Eigen::MatrixXd &x, const Eigen::MatrixXd &u);
+    public:
 
-    Eigen::MatrixXd Gradb(const Eigen::MatrixXd &x, const Eigen::MatrixXd &u);
-
-    Eigen::MatrixXd NextGrad(const Eigen::MatrixXd& x, const Eigen::MatrixXd& u);
-};
+        Layer(IndexType1 rows, IndexType1 columns);
+        Matrix Evaluate(const Matrix &batch);
+        Matrix GradA(const Matrix &batch, const Matrix &u);
+        Matrix Gradb(const Matrix &batch, const Matrix &u);
+        Matrix NextGrad(const Matrix &batch, const Matrix &u);
+    };
+}

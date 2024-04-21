@@ -1,75 +1,43 @@
 #include "Layer.h"
 
-Layer::Layer(int64_t m, int64_t n) {
-    A.resize(m, n);
-    b.resize(m, 1);
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::normal_distribution<double> distribution(0.0, 1.0);
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            A(i, j) = distribution(gen);
-        }
-        b(i) = distribution(gen);
+namespace NeuralNets {
+    Row Layer::GetRowOf1(IndexType1 cols) {
+        return Row::Ones(cols);
     }
-}
 
-Eigen::MatrixXd Layer::CalcLayerValue(const Eigen::MatrixXd &x) {
-    Eigen::MatrixXd b_matrix(b.rows(), x.cols());
-    for (int i = 0; i < x.cols(); ++i) {
-        b_matrix.col(i) = b;
+    Vector Layer::GetVecOf1(IndexType1 rows) {
+        return Vector::Ones(rows);
     }
-    Eigen::MatrixXd temp = A * x + b_matrix;
-    return Sigma::EvaluateFunc(temp);
-}
 
-Eigen::MatrixXd Layer::GradA(const Eigen::MatrixXd &x, const Eigen::MatrixXd &u) {
-    assert(x.cols() == u.rows());
-    Eigen::MatrixXd grad(A.rows(), A.cols());
-    Eigen::MatrixXd u_tr = u.transpose();
-    Eigen::MatrixXd x_tr = x.transpose();
-    Eigen::MatrixXd b_matrix(b.rows(), x.cols());
-    for (int i = 0; i < x.cols(); ++i) {
-        b_matrix.col(i) = b;
-    }
-    Eigen::MatrixXd temp = A * x + b_matrix;
-    Eigen::MatrixXd d_sigma = Sigma::EvaluateDerivative(temp);
-    for (int i = 0; i < d_sigma.cols(); ++i) {
-        Eigen::MatrixXd col_diagonal = d_sigma.col(i).asDiagonal();
-        grad += col_diagonal * u_tr.col(i) * x_tr.row(i);
-    }
-    return grad;
-}
+    Layer::Layer(IndexType1 rows, IndexType1 columns) : A_(Rand::GetNormal(rows, columns)),
+                                                        b_(Rand::GetNormal(rows, 1)) {}
 
-Eigen::MatrixXd Layer::Gradb(const Eigen::MatrixXd &x, const Eigen::MatrixXd &u) {
-    assert(x.cols() == u.rows());
-    Eigen::MatrixXd u_tr = u.transpose();
-    Eigen::MatrixXd b_matrix(b.rows(), x.cols());
-    for (int i = 0; i < x.cols(); ++i) {
-        b_matrix.col(i) = b;
+    Matrix Layer::Evaluate(const Matrix &batch) {
+        Matrix linear_part = A_ * batch + b_ * GetRowOf1(batch.cols());
+        return Sigmoid::EvaluateFunc(linear_part);
     }
-    Eigen::MatrixXd temp = A * x + b_matrix;
-    Eigen::MatrixXd d_sigma = Sigma::EvaluateDerivative(temp);
-    Eigen::MatrixXd grad(b.rows(), 1);
-    for (int i = 0; i < d_sigma.cols(); ++i) {
-        Eigen::MatrixXd col_diagonal = d_sigma.col(i).asDiagonal();
-        grad += col_diagonal * u_tr.col(i);
-    }
-    return grad;
-}
 
-Eigen::MatrixXd Layer::NextGrad(const Eigen::MatrixXd& x, const Eigen::MatrixXd& u) {
-    assert(x.cols() == u.rows());
-    Eigen::MatrixXd next_grad(u.rows(), A.cols());
-    Eigen::MatrixXd b_matrix(b.rows(), x.cols());
-    for (int i = 0; i < x.cols(); ++i) {
-        b_matrix.col(i) = b;
+    Matrix Layer::GradA(const Matrix &batch, const Matrix &u) {
+        assert(batch.cols() == u.rows());
+        Matrix linear_part = A_ * batch + b_ * GetRowOf1(batch.cols());
+        Matrix d_sigma = Sigmoid::EvaluateDerivative(linear_part);
+        Matrix grad = d_sigma.cwiseProduct(u.transpose()) * batch.transpose();
+        return grad / batch.cols();
     }
-    Eigen::MatrixXd temp = A * x + b_matrix;
-    Eigen::MatrixXd d_sigma = Sigma::EvaluateDerivative(temp);
-    for (int i = 0; i < u.rows(); ++i) {
-        Eigen::MatrixXd col_diagonal = d_sigma.col(i).asDiagonal();
-        next_grad.row(i) = u.row(i) * col_diagonal * A;
+
+    Matrix Layer::Gradb(const Matrix &batch, const Matrix &u) {
+        assert(batch.cols() == u.rows());
+        Matrix linear_part = A_ * batch + b_ * GetRowOf1(batch.cols());
+        Matrix d_sigma = Sigmoid::EvaluateDerivative(linear_part);
+        Matrix grad = d_sigma.cwiseProduct(u.transpose()) * GetVecOf1(batch.cols());
+        return grad / batch.cols();
     }
-    return next_grad;
+
+    Matrix Layer::NextGrad(const Matrix &batch, const Matrix &u) {
+        assert(batch.cols() == u.rows());
+        Matrix linear_part = A_ * batch + b_ * GetRowOf1(batch.cols());
+        Matrix d_sigma = Sigmoid::EvaluateDerivative(linear_part);
+        Matrix next_grad = u.cwiseProduct(d_sigma.transpose()) * A_;
+        return next_grad;
+    }
 }

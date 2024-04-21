@@ -1,15 +1,16 @@
 #pragma once
 
-#include <Eigen/Dense>
 #include "Layer.h"
 
-class Penalty {
-public:
-    static double FindDist(const Eigen::MatrixXd &z, const Eigen::MatrixXd &y);
+namespace NeuralNets {
 
-    static std::pair<double, std::vector<Eigen::MatrixXd>> CalcPenalty(
-            const std::vector<std::pair<Eigen::MatrixXd, Eigen::MatrixXd>> &data, std::vector<Layer> &network);
+    class Penalty {
+        static IndexType2 Pow(IndexType2 x);
+        static IndexType2 FindDist(const Vector &z, const Vector &y);
 
-    static Eigen::MatrixXd FindInitialRow(const std::vector<std::pair<Eigen::MatrixXd,
-            Eigen::MatrixXd>> &data, std::vector<Layer> &network);
-};
+    public:
+
+        static IndexType2 CalcPenalty(const Matrix& batch_y, const Matrix& network_out);
+        static Matrix FindInitialGradient(const Matrix& batch_y, const Matrix& network_out);
+    };
+}
