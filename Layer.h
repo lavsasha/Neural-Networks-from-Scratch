@@ -1,24 +1,21 @@
 #pragma once
 
-#include "Sigmoid.h"
+#include "ActivationFunction.h"
 #include "Rand.h"
 
 namespace NeuralNets {
     class Layer {
+
         Matrix A_;
         Vector b_;
-
-        static Row GetRowOf1(IndexType1 cols);
-        static Vector GetVecOf1(IndexType1 rows);
-
-        friend class Network;
+        ActivationFunction ActivationFunction_;
 
     public:
-
-        Layer(IndexType1 rows, IndexType1 columns);
-        Matrix Evaluate(const Matrix &batch);
-        Matrix GradA(const Matrix &batch, const Matrix &u);
-        Matrix Gradb(const Matrix &batch, const Matrix &u);
-        Matrix NextGrad(const Matrix &batch, const Matrix &u);
+        Layer(IndexType1 rows, IndexType1 columns, AF_id func);
+        Matrix Evaluate(const Matrix &batch) const;
+        Matrix GradA(const Matrix &batch, const Matrix &grad);
+        Vector Gradb(const Matrix &batch, const Matrix &grad);
+        void ChangeParams(const Matrix& delta_A, const Vector& delta_b, IndexType2 step);
+        Matrix NextGrad(const Matrix &batch, const Matrix &grad) const;
     };
 }

@@ -1,8 +1,14 @@
-cmake_minimum_required(VERSION 3.0)
-project(network)
+cmake_minimum_required(VERSION 3.24)
+project(network_test)
 
-add_executable(network_test Layer.cpp Network.cpp Penalty.cpp Sigmoid.cpp tests.cpp
+add_executable(
+        network_test
         Rand.cpp
-        usings.h
+        Layer.cpp
+        ActivationFunction.cpp
+        Penalty.cpp
+        Network.cpp
+        LearningRate.cpp
+        tests.cpp
 )
 target_include_directories(network_test PUBLIC eigen EigenRand)

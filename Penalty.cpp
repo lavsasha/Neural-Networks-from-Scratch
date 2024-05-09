@@ -1,26 +1,41 @@
 #include "Penalty.h"
 
 namespace NeuralNets {
-    IndexType2 Penalty::Pow(IndexType2 x) {
-        return std::pow(x, 2);
+    Penalty::Penalty(PenaltyFuncType PenaltyFunc, GradientFuncType GradientFunc)
+            : PenaltyFunc_(std::move(PenaltyFunc)),
+              GradientFunc_(std::move(GradientFunc)) {
+            assert(PenaltyFunc_ && "Empty Penalty function!");
+            assert(GradientFunc_ && "Empty Gradient function!");
     }
 
-    IndexType2 Penalty::FindDist(const Vector &z, const Vector &y) {
-        assert(z.size() == y.size());
-        Vector squared_diff = (z - y).unaryExpr(&Pow);
-        return std::accumulate(squared_diff.data(), squared_diff.data() + squared_diff.size(), 0.0);
+    template<PenaltyId penalty> Penalty Penalty::Initialize() {
+        return Penalty(PenaltyDatabase::CalcPenalty<penalty>, PenaltyDatabase::FindInitialGradient<penalty>);
     }
 
-    IndexType2 Penalty::CalcPenalty(const Matrix &batch_y, const Matrix &network_out) {
-        assert(batch_y.rows() == network_out.rows());
-        assert(batch_y.cols() == network_out.cols());
-        Matrix squared_diff = (batch_y - network_out).unaryExpr(&Pow);
-        return squared_diff.sum() / batch_y.cols();
+    Penalty Penalty::Initialize(PenaltyId penalty) {
+        switch (penalty) {
+            case PenaltyId::MSE: {
+                return Initialize<PenaltyId::MSE>();
+            }
+            case PenaltyId::MAE: {
+                return Initialize<PenaltyId::MAE>();
+            }
+            case PenaltyId::CrossEntropy: {
+                return Initialize<PenaltyId::CrossEntropy>();
+            }
+            default:
+                return Initialize<PenaltyId::MSE>();
+        }
     }
 
-    Matrix Penalty::FindInitialGradient(const Matrix &batch_y, const Matrix &network_out) {
-        assert(batch_y.rows() == network_out.rows());
-        assert(batch_y.cols() == network_out.cols());
-        return 2 * (batch_y.transpose() - network_out.transpose());
+    IndexType2 Penalty::CalcPenalty(const Matrix &network_out, const Matrix &batch_y) const {
+        return PenaltyFunc_(network_out, batch_y);
     }
+
+    Matrix Penalty::FindInitialGradient(const Matrix &network_out, const Matrix &batch_y) const {
+        return GradientFunc_(network_out, batch_y);
+    }
+
+    bool Penalty::IsEmpty() { return PenaltyFunc_ && GradientFunc_; }
+
 }
