@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Penalty.h"
 #include "Layer.h"
 #include "LearningRate.h"
+#include "Penalty.h"
 
 namespace NeuralNets {
     class Network {

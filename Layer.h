@@ -1,5 +1,6 @@
 #pragma once
 
+#include "usings.h"
 #include "ActivationFunction.h"
 #include "Rand.h"
 

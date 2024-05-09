@@ -9,7 +9,7 @@ namespace NeuralNets {
     }
 
     template<PenaltyId penalty> Penalty Penalty::Initialize() {
-        return Penalty(PenaltyDatabase::CalcPenalty<penalty>, PenaltyDatabase::FindInitialGradient<penalty>);
+        return Penalty(NeuralNets::CalcPenalty<penalty>, NeuralNets::FindInitialGradient<penalty>);
     }
 
     Penalty Penalty::Initialize(PenaltyId penalty) {

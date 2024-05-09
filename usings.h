@@ -19,7 +19,6 @@ namespace NeuralNets {
     using FunctionType = std::function<Matrix(const Matrix &)>;
     using PenaltyFuncType = std::function<IndexType2(const Vector &, const Vector &)>;
     using GradientFuncType = std::function<Matrix(const Matrix &, const Matrix &)>;
-    using Step = std::function<IndexType2(Index)>;
 
     enum {
         measure = 100,
@@ -34,5 +33,4 @@ namespace NeuralNets {
     static Vector GetVecOf1(IndexType1 rows) {
         return Vector::Ones(rows);
     }
-
 }
