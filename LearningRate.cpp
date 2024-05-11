@@ -2,9 +2,9 @@
 
 namespace NeuralNets {
     LearningRate::LearningRate(IndexType2 init_rate) : schedule_(LRSchedule::Constant), init_rate_(init_rate),
-                                                       reduct_coef_(0) {}
+                                                       reduct_coef_(1) {}
     LearningRate::LearningRate(IndexType2 init_rate, LRSchedule schedule)
-            : schedule_(schedule), init_rate_(init_rate), reduct_coef_(0) {
+            : schedule_(schedule), init_rate_(init_rate), reduct_coef_(1) {
         assert(schedule == LRSchedule::Linear && "This constructor is only for linear schedule");}
     LearningRate::LearningRate(IndexType2 init_rate, IndexType2 reduct_coef)
             : schedule_(LRSchedule::Exponential), init_rate_(init_rate), reduct_coef_(reduct_coef) {}

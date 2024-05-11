@@ -97,21 +97,19 @@ namespace NeuralNets {
     }
 
     class ActivationFunction {
-
         FunctionType Evaluate_0_;
         FunctionType Evaluate_1_;
 
     public:
         ActivationFunction(FunctionType Evaluate_0, FunctionType Evaluate_1);
 
-        template<AF_id func>
-        static ActivationFunction Initialize() {
+        template<AF_id func> static ActivationFunction Initialize() {
             return ActivationFunction(Evaluate_0_mat<func>, Evaluate_1_mat<func>);
         }
         static ActivationFunction Initialize(AF_id func);
 
-        Matrix Apply(const Matrix &layer_val) const;
-        Matrix Derivative(const Matrix &layer_val) const;
+        Matrix Apply(const Matrix &linear_part) const;
+        Matrix Derivative(const Matrix &linear_part) const;
 
         bool IsEmpty();
     };

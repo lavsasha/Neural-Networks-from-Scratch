@@ -6,13 +6,12 @@
 
 namespace NeuralNets {
     class Layer {
-
         Matrix A_;
         Vector b_;
         ActivationFunction ActivationFunction_;
 
     public:
-        Layer(IndexType1 rows, IndexType1 columns, AF_id func);
+        Layer(IndexType1 cols, IndexType1 rows, AF_id func);
         Matrix Evaluate(const Matrix &batch) const;
         Matrix GradA(const Matrix &batch, const Matrix &grad);
         Vector Gradb(const Matrix &batch, const Matrix &grad);

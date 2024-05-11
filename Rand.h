@@ -6,6 +6,6 @@ namespace NeuralNets
 {
     class Rand {
     public:
-        static Matrix GetNormal(IndexType1 rows, IndexType1 columns);
+        static Matrix GetNormal(IndexType1 rows, IndexType1 cols);
     };
 }

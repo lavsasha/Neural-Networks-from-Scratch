@@ -18,14 +18,14 @@ namespace NeuralNets {
         }
     }
 
-    Matrix ActivationFunction::Apply(const Matrix &layer_val) const {
+    Matrix ActivationFunction::Apply(const Matrix &linear_part) const {
         assert(Evaluate_0_ && "Empty Evaluate_0 method!");
-        return Evaluate_0_(layer_val);
+        return Evaluate_0_(linear_part);
     }
 
-    Matrix ActivationFunction::Derivative(const Matrix &layer_val) const {
+    Matrix ActivationFunction::Derivative(const Matrix &linear_part) const {
         assert(Evaluate_1_ && "Empty Evaluate_1 method!");
-        return Evaluate_1_(layer_val);
+        return Evaluate_1_(linear_part);
     }
 
     bool ActivationFunction::IsEmpty() {

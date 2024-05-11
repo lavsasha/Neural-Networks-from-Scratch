@@ -14,7 +14,7 @@ namespace NeuralNets {
     public:
         LearningRate(IndexType2 init_rate);
         LearningRate(IndexType2 init_rate, IndexType2 reduct_coef);
-        LearningRate(IndexType2 init_rate, LRSchedule schedule = LRSchedule::Linear);
+        LearningRate(IndexType2 init_rate, LRSchedule schedule);
 
         IndexType2 GetRate(Index epoch) const;
         void ChangeRate();

@@ -47,6 +47,7 @@ namespace NeuralNets {
     template<>
     inline IndexType2 CalcPenalty<PenaltyId::CrossEntropy>(const Matrix &network_out, const Matrix &batch_y) {
         assert(network_out.size() == batch_y.size() && "network_out and batch_y must have the same size");
+        assert(network_out.minCoeff() > 0 && "all elements of network_out must be positive");
         Matrix cross_diff = batch_y.cwiseProduct(network_out.unaryExpr([](IndexType2 el) {
             return log(el);
         }));
@@ -57,6 +58,7 @@ namespace NeuralNets {
     template<>
     inline Matrix FindInitialGradient<PenaltyId::CrossEntropy>(const Matrix &network_out, const Matrix &batch_y) {
         assert(network_out.size() == batch_y.size() && "network_out and batch_y must have the same size");
+        assert(network_out.minCoeff() > 0 && "all elements of network_out must be positive");
         return -batch_y.transpose().cwiseProduct(
                 network_out.transpose().unaryExpr([](IndexType2 el) { return 1.0 / el; }));
     }

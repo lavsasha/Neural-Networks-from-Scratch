@@ -15,14 +15,14 @@ namespace NeuralNets {
     using Row = Eigen::RowVectorXd;
     using IndexType1 = long long;
     using IndexType2 = double;
+    using IndexType3 = bool;
     using Index = Eigen::Index;
     using FunctionType = std::function<Matrix(const Matrix &)>;
-    using PenaltyFuncType = std::function<IndexType2(const Vector &, const Vector &)>;
+    using PenaltyFuncType = std::function<IndexType2(const Matrix &, const Matrix &)>;
     using GradientFuncType = std::function<Matrix(const Matrix &, const Matrix &)>;
 
     enum {
-        measure = 100,
-        max_number = 1000000000,
+        measure = 14,
         sample_num = 5
     };
 

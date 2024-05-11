@@ -2,8 +2,8 @@
 
 namespace NeuralNets {
 
-    Layer::Layer(IndexType1 rows, IndexType1 columns, AF_id func)
-            : A_(Rand::GetNormal(rows, columns)),
+    Layer::Layer(IndexType1 cols, IndexType1 rows, AF_id func)
+            : A_(Rand::GetNormal(rows, cols)),
               b_(Rand::GetNormal(rows, 1)),
               ActivationFunction_(ActivationFunction::Initialize(func)) {}
 
@@ -15,20 +15,20 @@ namespace NeuralNets {
 
     Matrix Layer::GradA(const Matrix &batch, const Matrix &grad) {
         assert(A_.cols() == batch.rows() && "Matrix A should have as many columns as there are rows in batch");
+        assert(A_.rows() == grad.cols() && "Matrix A should have as many rows as there are columns in grad");
         assert(grad.rows() == batch.cols() && "batch should have as many columns as there are rows in grad");
         Matrix linear_part = A_ * batch + b_ * GetRowOf1(batch.cols());
         Matrix d_sigma = ActivationFunction_.Derivative(linear_part);
-        Matrix delta_A = d_sigma.cwiseProduct(grad.transpose()) * batch.transpose() / batch.cols();
-        return delta_A;
+        return d_sigma.cwiseProduct(grad.transpose()) * batch.transpose() / batch.cols();
     }
 
     Vector Layer::Gradb(const Matrix &batch, const Matrix &grad) {
         assert(A_.cols() == batch.rows() && "Matrix A should have as many columns as there are rows in batch");
+        assert(A_.rows() == grad.cols() && "Matrix A should have as many rows as there are columns in grad");
         assert(grad.rows() == batch.cols() && "batch should have as many columns as there are rows in grad");
         Matrix linear_part = A_ * batch + b_ * GetRowOf1(batch.cols());
         Matrix d_sigma = ActivationFunction_.Derivative(linear_part);
-        Vector delta_b = d_sigma.cwiseProduct(grad.transpose()) * GetVecOf1(batch.cols()) / batch.cols();
-        return delta_b;
+        return d_sigma.cwiseProduct(grad.transpose()) * GetVecOf1(batch.cols()) / batch.cols();
     }
 
     void Layer::ChangeParams(const Matrix &delta_A, const Vector &delta_b, IndexType2 step) {
@@ -40,10 +40,10 @@ namespace NeuralNets {
 
     Matrix Layer::NextGrad(const Matrix &batch, const Matrix &grad) const {
         assert(A_.cols() == batch.rows() && "Matrix A should have as many columns as there are rows in batch");
+        assert(A_.rows() == grad.cols() && "Matrix A should have as many rows as there are columns in grad");
         assert(grad.rows() == batch.cols() && "batch should have as many columns as there are rows in grad");
-        Matrix linear_part = A_ * batch + b_ * GetRowOf1(batch.cols());
+        Matrix linear_part = (A_ * batch + b_ * GetRowOf1(batch.cols())).eval();
         Matrix d_sigma = ActivationFunction_.Derivative(linear_part);
-        Matrix next_grad = grad.cwiseProduct(d_sigma.transpose()) * A_;
-        return next_grad;
+        return grad.cwiseProduct(d_sigma.transpose()) * A_;
     }
 }
