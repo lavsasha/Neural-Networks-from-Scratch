@@ -2,7 +2,7 @@
 
 namespace NeuralNets
 {
-    Matrix Rand::GetNormal(IndexType1 rows, IndexType1 cols) {
+    Matrix Rand::GetNormal(Index rows, Index cols) {
         return Matrix::Random(rows, cols);
     }
 }

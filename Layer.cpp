@@ -2,7 +2,7 @@
 
 namespace NeuralNets {
 
-    Layer::Layer(IndexType1 cols, IndexType1 rows, AF_id func)
+    Layer::Layer(Index cols, Index rows, AF_id func)
             : A_(Rand::GetNormal(rows, cols)),
               b_(Rand::GetNormal(rows, 1)),
               ActivationFunction_(ActivationFunction::Initialize(func)) {}
@@ -31,7 +31,7 @@ namespace NeuralNets {
         return d_sigma.cwiseProduct(grad.transpose()) * GetVecOf1(batch.cols()) / batch.cols();
     }
 
-    void Layer::ChangeParams(const Matrix &delta_A, const Vector &delta_b, IndexType2 step) {
+    void Layer::ChangeParams(const Matrix &delta_A, const Vector &delta_b, Scalar step) {
         assert(A_.size() == delta_A.size() && "Matrix A and its gradient should have the same size!");
         assert(b_.size() == delta_b.size() && "Vector b and its gradient should have the same size!");
         A_ -= step * delta_A;

@@ -1,22 +1,24 @@
 #pragma once
-#include "usings.h"
+#include "EigenProxy.h"
 
 namespace NeuralNets {
+    using Scalar = double;
+
     enum class LRSchedule {
         Constant, Linear, Exponential
     };
 
     class LearningRate {
         LRSchedule schedule_;
-        IndexType2 init_rate_;
-        IndexType2 reduct_coef_;
+        Scalar init_rate_;
+        Scalar reduct_coef_;
 
     public:
-        LearningRate(IndexType2 init_rate);
-        LearningRate(IndexType2 init_rate, IndexType2 reduct_coef);
-        LearningRate(IndexType2 init_rate, LRSchedule schedule);
+        LearningRate(Scalar init_rate);
+        LearningRate(Scalar init_rate, Scalar reduct_coef);
+        LearningRate(Scalar init_rate, LRSchedule schedule);
 
-        IndexType2 GetRate(Index epoch) const;
+        Scalar GetRate(Index epoch) const;
         void ChangeRate();
     };
 }

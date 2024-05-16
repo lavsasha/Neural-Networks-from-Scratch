@@ -1,18 +1,19 @@
 #pragma once
 
-#include "usings.h"
+#include "EigenProxy.h"
 
 namespace NeuralNets {
+    using Scalar = double;
 
     enum class AF_id {
         Sigmoid, ReLu, Tanh
     };
 
     template<AF_id>
-    static IndexType2 Evaluate_0(IndexType2);
+    static Scalar Evaluate_0(Scalar);
 
     template<AF_id>
-    static IndexType2 Evaluate_1(IndexType2);
+    static Scalar Evaluate_1(Scalar);
 
     template<AF_id>
     static Matrix Evaluate_0_mat(const Matrix &);
@@ -21,41 +22,41 @@ namespace NeuralNets {
     static Matrix Evaluate_1_mat(const Matrix &);
 
     template<>
-    inline IndexType2 Evaluate_0<AF_id::Sigmoid>(IndexType2 x) {
-        IndexType2 result = 1 / (1 + exp(-x));
+    inline Scalar Evaluate_0<AF_id::Sigmoid>(Scalar x) {
+        Scalar result = 1 / (1 + exp(-x));
         assert(std::isfinite(result));
         return result;
     }
 
     template<>
-    inline IndexType2 Evaluate_1<AF_id::Sigmoid>(IndexType2 x) {
+    inline Scalar Evaluate_1<AF_id::Sigmoid>(Scalar x) {
         assert(std::isfinite(x));
-        IndexType2 result = 1 / (exp(x) + exp(-x) + 2);
+        Scalar result = 1 / (exp(x) + exp(-x) + 2);
         assert(std::isfinite(result));
         return result;
     }
 
     template<>
-    inline IndexType2 Evaluate_0<AF_id::ReLu>(IndexType2 x) {
+    inline Scalar Evaluate_0<AF_id::ReLu>(Scalar x) {
         return x * (x > 0);
     }
 
     template<>
-    inline IndexType2 Evaluate_1<AF_id::ReLu>(IndexType2 x) {
-        return x > 0 ? 1 : 0;
+    inline Scalar Evaluate_1<AF_id::ReLu>(Scalar x) {
+        return x > 0;
     }
 
     template<>
-    inline IndexType2 Evaluate_0<AF_id::Tanh>(IndexType2 x) {
-        IndexType2 result = 2 / (1 + exp(-2 * x)) - 1;
+    inline Scalar Evaluate_0<AF_id::Tanh>(Scalar x) {
+        Scalar result = 2 / (1 + exp(-2 * x)) - 1;
         assert(std::isfinite(result));
         return result;
     }
 
     template<>
-    inline IndexType2 Evaluate_1<AF_id::Tanh>(IndexType2 x) {
+    inline Scalar Evaluate_1<AF_id::Tanh>(Scalar x) {
         assert(std::isfinite(x));
-        IndexType2 result = 4 / (exp(2 * x) + exp(-2 * x) + 2);
+        Scalar result = 4 / (exp(2 * x) + exp(-2 * x) + 2);
         assert(std::isfinite(result));
         return result;
     }
@@ -63,40 +64,41 @@ namespace NeuralNets {
     template<>
     inline Matrix Evaluate_0_mat<AF_id::Sigmoid>(const Matrix &batch) {
         return batch.unaryExpr(
-                [](IndexType2 x) { return Evaluate_0<AF_id::Sigmoid>(x); });
+                [](Scalar x) { return Evaluate_0<AF_id::Sigmoid>(x); });
     }
 
     template<>
     inline Matrix Evaluate_1_mat<AF_id::Sigmoid>(const Matrix &batch) {
         return batch.unaryExpr(
-                [](IndexType2 x) { return Evaluate_1<AF_id::Sigmoid>(x); });
+                [](Scalar x) { return Evaluate_1<AF_id::Sigmoid>(x); });
     }
 
     template<>
     inline Matrix Evaluate_0_mat<AF_id::ReLu>(const Matrix &batch) {
         return batch.unaryExpr(
-                [](IndexType2 x) { return Evaluate_0<AF_id::ReLu>(x); });
+                [](Scalar x) { return Evaluate_0<AF_id::ReLu>(x); });
     }
 
     template<>
     inline Matrix Evaluate_1_mat<AF_id::ReLu>(const Matrix &batch) {
         return batch.unaryExpr(
-                [](IndexType2 x) { return Evaluate_1<AF_id::ReLu>(x); });
+                [](Scalar x) { return Evaluate_1<AF_id::ReLu>(x); });
     }
 
     template<>
     inline Matrix Evaluate_0_mat<AF_id::Tanh>(const Matrix &batch) {
         return batch.unaryExpr(
-                [](IndexType2 x) { return Evaluate_0<AF_id::Tanh>(x); });
+                [](Scalar x) { return Evaluate_0<AF_id::Tanh>(x); });
     }
 
     template<>
     inline Matrix Evaluate_1_mat<AF_id::Tanh>(const Matrix &batch) {
         return batch.unaryExpr(
-                [](IndexType2 x) { return Evaluate_1<AF_id::Tanh>(x); });
+                [](Scalar x) { return Evaluate_1<AF_id::Tanh>(x); });
     }
 
     class ActivationFunction {
+        using FunctionType = std::function<Matrix(const Matrix &)>;
         FunctionType Evaluate_0_;
         FunctionType Evaluate_1_;
 

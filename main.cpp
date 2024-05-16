@@ -1,6 +1,11 @@
+#include "Except.h"
 #include "tests.h"
 
 int main() {
-    test::RunAllTests();
+    try {
+        test::RunAllTests();
+    } catch (...) {
+        Except::React();
+    }
     return 0;
 }

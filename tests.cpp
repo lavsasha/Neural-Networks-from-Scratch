@@ -159,7 +159,7 @@ namespace {
         batch << 2, 7, 7, 8, 1, 4;
         Matrix net_out(3, 2);
         net_out << 3, 5, 6, 9, 0, 3;
-        IndexType2 res = 4.5;
+        Scalar res = 4.5;
         assert(abs(penalty.CalcPenalty(net_out, batch) - res) < 1e-5);
     }
 
@@ -181,7 +181,7 @@ namespace {
         batch << 2, 7, 7, 8, 1, 4;
         Matrix net_out(3, 2);
         net_out << 3, 5, 6, 9, 0, 3;
-        IndexType2 res = 3.5;
+        Scalar res = 3.5;
         assert(abs(penalty.CalcPenalty(net_out, batch) - res) < 1e-5);
     }
 
@@ -203,7 +203,7 @@ namespace {
         batch << 2, 7, 7, 0, 1, 4;
         Matrix net_out(3, 2);
         net_out << 3, 5, 6, 9, 2, 3;
-        IndexType2 res = 15.5466;
+        Scalar res = 15.5466;
         assert(abs(penalty.CalcPenalty(net_out, batch) - res) < 1e-5);
     }
 
@@ -232,26 +232,26 @@ namespace {
 
     void LearningRateConstGetRateTest() {
         LearningRate lr_const(1.0);
-        IndexType2 res = 1.0;
+        Scalar res = 1.0;
         assert(abs(lr_const.GetRate(25) - res) < 1e-5);
     }
 
     void LearningRateLinearGetRateTest() {
         LearningRate lr_linear(3.5, LRSchedule::Linear);
-        IndexType2 res = 0.14;
+        Scalar res = 0.14;
         assert(abs(lr_linear.GetRate(25) - res) < 1e-5);
     }
 
     void LearningRateExpGetRateTest() {
         LearningRate lr_exp(2.0, 4.5);
-        IndexType2 res = 7.93687e-69;
+        Scalar res = 7.93687e-69;
         assert(abs(lr_exp.GetRate(35) - res) < 1e-5);
     }
 
     void LearningRateChangeRateTest() {
         LearningRate lr(2.0);
         lr.ChangeRate();
-        IndexType2 res = 0.0740741;
+        Scalar res = 0.0740741;
         assert(abs(lr.GetRate(27) - res) < 1e-5);
     }
 
